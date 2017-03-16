@@ -60,7 +60,7 @@ app.post('/register', function (req, res) {
         }
 
         passport.authenticate('local')(req, res, function () {
-            res.redirect('/secret');
+            res.redirect('secret', {user: user});
         });
 
 
@@ -71,11 +71,17 @@ app.get('/login', function (req, res) {
     res.render('login');
 });
 
+// app.post('/login', passport.authenticate('local', {
+//     successRedirect: '/secret',
+//     failureRedirect: '/login'
+// }), function (req, res) {
+//     res.render('secret', {user: req.user});
+// });
+
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/secret',
     failureRedirect: '/login'
 }), function (req, res) {
-
+    res.render('secret', {user: req.user});
 });
 
 app.get('/logout', function (req, res) {
@@ -85,6 +91,7 @@ app.get('/logout', function (req, res) {
 
 function isLoggedIn(req, res, next) {
     if(req.user) {
+        // console.log(req.user);
         return next();
     }
     res.redirect('/login');
