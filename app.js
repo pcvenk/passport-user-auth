@@ -1,6 +1,7 @@
 var path                  = require('path'),
     mongoose              = require('mongoose'),
     bodyParser            = require('body-parser'),
+    session               = require('express-session'),
     passport              = require('passport'),
     LocalStrategy         = require('passport-local'),
     passportLocalMongoose = require('passport-local-mongoose'),
@@ -13,6 +14,23 @@ mongoose.connect('mongodb://localhost/userAuth');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+//MIDDLEWARE SETUP
+
+//Express session
+app.use(session({
+    secret: 'Express-passport-user-auth',
+    resave: false,
+    saveUninitialized: false
+}));
+
+//Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 app.get('/', function(req, res){
    res.render('home');
