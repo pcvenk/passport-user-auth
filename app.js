@@ -1,4 +1,6 @@
-var path = require('path'),
+'use strict';
+
+let path = require('path'),
     mongoose = require('mongoose'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
@@ -11,6 +13,9 @@ var path = require('path'),
 
 //mongoose connection
 mongoose.connect('mongodb://localhost/userAuth');
+let db = mongoose.connection;
+    db.on('error', (error) => console.warn(error));
+    db.once('open', () => console.log('Good to go'));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -36,40 +41,33 @@ passport.deserializeUser(User.deserializeUser());
 app.use(bodyParser.urlencoded({extended: true}));
 
 
-app.get('/', function (req, res) {
-    res.render('home');
-});
+app.get('/', (req, res) => res.render('home'));
 
-app.get('/secret', isLoggedIn, function (req, res) {
-    res.render('secret');
-});
+
+app.get('/secret', isLoggedIn, (req, res) => res.render('secret'));
 
 //===========
 //Auth routes
 //===========
 
-app.get('/register', function (req, res) {
-    res.render('register');
-});
+app.get('/register', (req, res) => res.render('register'));
 
-app.post('/register', function (req, res) {
-    User.register(new User({username: req.body.username}), req.body.password, function (err, user) {
+app.post('/register', (req, res) => {
+    User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
         if (err) {
             console.log(err);
             return res.render('register');
         }
 
-        passport.authenticate('local')(req, res, function () {
-            res.redirect('secret', {user: user});
+        passport.authenticate('local')(req, res, () => {
+            res.render('secret', {user: user});
         });
 
 
     })
 });
 
-app.get('/login', function (req, res) {
-    res.render('login');
-});
+app.get('/login',(req, res) => res.render('login'));
 
 // app.post('/login', passport.authenticate('local', {
 //     successRedirect: '/secret',
@@ -80,11 +78,11 @@ app.get('/login', function (req, res) {
 
 app.post('/login', passport.authenticate('local', {
     failureRedirect: '/login'
-}), function (req, res) {
+}), (req, res) => {
     res.render('secret', {user: req.user});
 });
 
-app.get('/logout', function (req, res) {
+app.get('/logout', (req, res) => {
     req.logout();
     res.redirect('/');
 });
