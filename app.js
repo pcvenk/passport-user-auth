@@ -78,6 +78,11 @@ app.post('/login', passport.authenticate('local', {
 
 });
 
+app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+});
+
 app.listen(3000, function(){
    console.log('Server listening on port 3000');
 });
