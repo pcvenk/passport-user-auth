@@ -1,8 +1,12 @@
-var path     = require('path');
-var mongoose = require('mongoose');
-
-var express  = require('express');
-var app      = express();
+var path                  = require('path'),
+    mongoose              = require('mongoose'),
+    bodyParser            = require('body-parser'),
+    passport              = require('passport'),
+    LocalStrategy         = require('passport-local'),
+    passportLocalMongoose = require('passport-local-mongoose'),
+    User                  = require('./models/user'),
+    express               = require('express'),
+    app                   = express();
 
 //mongoose connection
 mongoose.connect('mongodb://localhost/userAuth');
